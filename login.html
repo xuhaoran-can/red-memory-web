@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 红色记忆济南英雄风云录</title>
+    
+    <!-- 引入Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="login.css">
+</head>
+<body class="login-page">
+    <!-- 背景装饰 -->
+    <div class="bg-decoration">
+        <div class="star star-1">★</div>
+        <div class="star star-2">★</div>
+        <div class="star star-3">★</div>
+        <div class="star star-4">★</div>
+        <div class="star star-5">★</div>
+    </div>
+
+    <!-- 登录容器 -->
+    <div class="login-container">
+        <!-- 顶部提示条（新增） -->
+        <div class="top-notice">
+            🎯 首次访问？请先<span class="highlight" onclick="switchTab('register')" style="cursor: pointer; text-decoration: underline; font-weight: bold;">注册账号</span>开始您的红色记忆之旅！
+        </div>
+        
+        <!-- Logo和标题 -->
+        <div class="login-header">
+            <div class="logo-circle">
+                <span class="logo-icon">🎖️</span>
+            </div>
+            <h1 class="login-title">红色记忆</h1>
+            <p class="login-subtitle">济南英雄风云录</p>
+        </div>
+
+        <!-- 表单切换标签 -->
+        <div class="form-tabs">
+            <button type="button" class="tab-btn active" id="tab-login" data-tab="login" onclick="switchTab('login')">
+                🔑 登录
+            </button>
+            <button type="button" class="tab-btn" id="tab-register" data-tab="register" onclick="switchTab('register')">
+                ✨ 注册新账号
+            </button>
+        </div>
+
+        <!-- 登录表单 -->
+        <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="login-username">
+                    <span class="input-icon">👤</span>
+                    用户名
+                </label>
+                <input 
+                    type="text" 
+                    id="login-username" 
+                    name="username"
+                    placeholder="请输入用户名"
+                    required
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="20"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="login-password">
+                    <span class="input-icon">🔒</span>
+                    密码
+                </label>
+                <div class="password-wrapper">
+                    <input 
+                        type="password" 
+                        id="login-password" 
+                        name="password"
+                        placeholder="请输入密码"
+                        required
+                        autocomplete="current-password"
+                        minlength="6"
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword('login-password', this)">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember-me">
+                    <input type="checkbox" name="remember">
+                    <span>记住我</span>
+                </label>
+                <a href="#" class="forgot-link" onclick="alert('请联系管理员重置密码')">忘记密码？</a>
+            </div>
+
+            <button type="submit" class="submit-btn login-btn" id="login-submit-btn">
+                <span class="btn-text">登 录</span>
+                <span class="btn-loading hidden">
+                    <span class="spinner"></span>
+                    登录中...
+                </span>
+            </button>
+
+            <div id="login-error" class="error-message hidden"></div>
+        </form>
+
+        <!-- 注册表单 -->
+        <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label for="register-username">
+                    <span class="input-icon">👤</span>
+                    用户名
+                </label>
+                <input 
+                    type="text" 
+                    id="register-username" 
+                    name="username"
+                    placeholder="3-20个字符，支持中英文数字"
+                    required
+                    autocomplete="username"
+                    minlength="3"
+                    maxlength="20"
+                    pattern="^[a-zA-Z0-9\u4e00-\u9fa5]+$"
+                >
+                <small class="form-hint">用于登录的唯一标识</small>
+            </div>
+
+            <div class="form-group">
+                <label for="register-nickname">
+                    <span class="input-icon">😊</span>
+                    昵称（可选）
+                </label>
+                <input 
+                    type="text" 
+                    id="register-nickname" 
+                    name="nickname"
+                    placeholder="在排行榜显示的名称"
+                    autocomplete="nickname"
+                    maxlength="20"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="register-password">
+                    <span class="input-icon">🔒</span>
+                    密码
+                </label>
+                <div class="password-wrapper">
+                    <input 
+                        type="password" 
+                        id="register-password" 
+                        name="password"
+                        placeholder="至少6个字符"
+                        required
+                        autocomplete="new-password"
+                        minlength="6"
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword('register-password', this)">
+                        👁️
+                    </button>
+                </div>
+                <small class="form-hint">建议包含字母、数字或符号</small>
+            </div>
+
+            <div class="form-group">
+                <label for="register-confirm-password">
+                    <span class="input-icon">🔐</span>
+                    确认密码
+                </label>
+                <div class="password-wrapper">
+                    <input 
+                        type="password" 
+                        id="register-confirm-password" 
+                        name="confirmPassword"
+                        placeholder="再次输入密码"
+                        required
+                        autocomplete="new-password"
+                        minlength="6"
+                    >
+                    <button type="button" class="toggle-password" onclick="togglePassword('register-confirm-password', this)">
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="agreement">
+                <label>
+                    <input type="checkbox" name="agree" required>
+                    <span>我已阅读并同意<a href="#" onclick="alert('服务条款')">《用户协议》</a></span>
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn register-btn" id="register-submit-btn">
+                <span class="btn-text">注 册</span>
+                <span class="btn-loading hidden">
+                    <span class="spinner"></span>
+                    注册中...
+                </span>
+            </button>
+
+            <div id="register-error" class="error-message hidden"></div>
+            <div id="register-success" class="success-message hidden"></div>
+        </form>
+
+        <!-- 底部提示 -->
+        <div class="login-footer">
+            <p class="footer-text">
+                🔐 您的信息将被安全加密存储
+            </p>
+            <p class="footer-text demo-hint" id="switch-to-register">
+                💡 还没有账号？<a href="javascript:void(0)" onclick="switchTab('register')" style="color: #FFD700; text-decoration: underline; font-weight: bold;">立即注册新账号 →</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="login.js"></script>
+</body>
+</html>

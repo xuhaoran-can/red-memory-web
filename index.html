@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>红色记忆——济南英雄风云录</title>
+    
+    <!-- 引入Chart.js用于趋势图 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 引入Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- 样式文件将在后续添加 -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- ==================== 顶部导航栏 ==================== -->
+    <header id="top-navbar" class="navbar">
+        <div class="navbar-content">
+            <!-- 左侧：网站标题 -->
+            <h1 class="site-title">★ 红色记忆——济南英雄风云录</h1>
+            
+            <!-- 右侧：功能区域 -->
+            <div class="navbar-functions">
+                <!-- 当前日期显示 -->
+                <div id="current-date" class="date-display"></div>
+                
+                <!-- 用户信息区域（登录后显示） -->
+                <div id="user-info" class="user-info hidden">
+                    <span class="user-avatar">👤</span>
+                    <span id="username-display" class="username-text"></span>
+                </div>
+                
+                <!-- 积分显示区域 -->
+                <div id="score-display" class="score-area">
+                    <span class="score-icon">🏆</span>
+                    <span id="score-value">0</span>
+                    <span class="score-label">积分</span>
+                </div>
+                
+                <!-- 登出按钮（登录后显示） -->
+                <button id="logout-btn" class="logout-button hidden" type="button" onclick="handleLogout()">
+                    🚪 退出
+                </button>
+                
+                <!-- 分享成就按钮 -->
+                <button id="share-btn" class="share-button" type="button">
+                    🎖️ 分享成就
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== 主内容区域（三栏布局） ==================== -->
+    <main id="main-container" class="main-wrapper">
+        
+        <!-- ========== 左侧边栏 ========== -->
+        <aside id="left-sidebar" class="sidebar left-sidebar">
+            
+            <!-- 荣誉勋章馆容器 -->
+            <section id="medals-gallery" class="panel medals-panel">
+                <h2 class="panel-title">🎖️ 荣誉勋章馆</h2>
+                <div id="medals-container" class="medals-container">
+                    <!-- 勋章将通过JavaScript动态加载 -->
+                </div>
+            </section>
+            
+            <!-- 解密活跃度趋势图容器 -->
+            <section id="activity-trend" class="panel trend-panel">
+                <h2 class="panel-title">📊 解密活跃度趋势</h2>
+                <div class="chart-container">
+                    <canvas id="trend-chart"></canvas>
+                </div>
+            </section>
+        </aside>
+
+        <!-- ========== 中间主区域（AI对话界面） ========== -->
+        <section id="chat-main" class="main-chat-area">
+            
+            <!-- AI导览员头像和信息区 -->
+            <div id="ai-guide-header" class="guide-header">
+                <div id="guide-avatar" class="guide-avatar">
+                    <img src="assets/guide-avatar.png" alt="红色导览员" class="avatar-img">
+                    <span class="avatar-status online">● 在线</span>
+                </div>
+                <div class="guide-info">
+                    <h3 class="guide-name">红色导览员</h3>
+                    <p class="guide-desc">探索济南革命历史，解锁英雄故事</p>
+                </div>
+            </div>
+            
+            <!-- 对话消息展示区 -->
+            <div id="chat-messages" class="messages-container">
+                <!-- 消息将通过JavaScript动态加载 -->
+            </div>
+            
+            <!-- 开始解密挑战按钮 -->
+            <button id="start-challenge-btn" class="challenge-button" type="button">
+                🚀 开始解密挑战
+            </button>
+            
+            <!-- 输入区域 -->
+            <div id="input-area" class="input-section">
+                <textarea 
+                    id="user-input" 
+                    class="chat-input" 
+                    placeholder="请输入您的问题或回答..."
+                    rows="2"
+                ></textarea>
+                <button id="send-btn" class="send-button" type="button">
+                    发送 ➤
+                </button>
+            </div>
+        </section>
+
+        <!-- ========== 右侧边栏 ========== -->
+        <aside id="right-sidebar" class="sidebar right-sidebar">
+            
+            <!-- 智能线索墙容器 -->
+            <section id="clues-wall" class="panel clues-panel">
+                <h2 class="panel-title">💡 智能线索墙</h2>
+                
+                <!-- 搜索框 -->
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="clue-search-input" 
+                        class="clue-search-input"
+                        placeholder="搜索线索关键词..."
+                    >
+                    <button id="search-clue-btn" class="search-button" type="button">
+                        🔍 搜索
+                    </button>
+                </div>
+                
+                <!-- 申请线索按钮 -->
+                <button id="request-clue-btn" class="request-clue-button" type="button">
+                    ✨ 申请新线索
+                </button>
+                
+                <!-- 线索列表容器 -->
+                <div id="clues-list" class="clues-list">
+                    <!-- 线索卡片将通过JavaScript动态生成 -->
+                </div>
+            </section>
+            
+            <!-- 今日解密排行榜容器 -->
+            <section id="leaderboard" class="panel leaderboard-panel">
+                <div class="leaderboard-header">
+                    <h2 class="panel-title">🏅 今日解密排行榜</h2>
+                    <button id="refresh-leaderboard-btn" class="refresh-button" type="button" title="刷新排名">
+                        🔄
+                    </button>
+                </div>
+                <ul id="leaderboard-list" class="leaderboard-list">
+                    <!-- 排行榜数据将通过JavaScript动态加载 -->
+                </ul>
+                <div id="my-ranking" class="my-ranking hidden">
+                    <!-- 当前用户排名信息 -->
+                </div>
+            </section>
+        </aside>
+        
+    </main>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer id="page-footer" class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 红色记忆——济南英雄风云录 | 传承红色基因，铭记英雄事迹</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript文件 -->
+    <!-- API客户端（必须在script.js之前加载） -->
+    <script src="api-client.js"></script>
+    <!-- 主应用逻辑 -->
+    <script src="script.js"></script>
+    <!-- 系统升级补丁（连接真实API，覆盖关键函数） -->
+    <script src="upgrade.js"></script>
+</body>
+</html>

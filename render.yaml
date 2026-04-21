@@ -1,0 +1,1 @@
+{"version": 1, "name": "red-memory-web", "type": "web", "env": "node", "build": {"install": "npm install", "start": "npm run init-db && node server.js"}, "env_vars": {"PORT": "10000", "NODE_ENV": "production"}, "plan": "free"}
