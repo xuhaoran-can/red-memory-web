@@ -1,11 +1,14 @@
 # 依赖
 node_modules/
 
-# 数据库文件
+# 数据库文件 (SQLite)
 database/*.db
 database/*.db-journal
 database/*.db-wal
 database/*.db-shm
+
+# JSON数据存储 (Vercel) - 排除实际数据，但保留目录结构
+data/*.json
 
 # 环境变量
 .env
@@ -30,3 +33,6 @@ Thumbs.db
 tmp/
 temp/
 .cache/
+
+# Vercel
+.vercel
