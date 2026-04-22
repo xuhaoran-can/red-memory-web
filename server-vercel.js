@@ -16,6 +16,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 // ==================== 配置 ====================
 const PORT = process.env.PORT || 3000;
@@ -60,10 +61,11 @@ function useJSONStore() {
     try {
         store = require('./data-store');
         console.log('✅ 已切换到JSON文件存储模式');
+        console.log(`📁 数据目录: ${process.env.USE_JSON_STORE === 'true' ? '/tmp/data (Vercel)' : './data (本地)'}`);
         USE_JSON_STORE = true;
     } catch (error) {
         console.error('❌ 加载数据存储模块失败:', error.message);
-        process.exit(1);
+        console.error(error.stack);
     }
 }
 
@@ -74,8 +76,25 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 静态文件服务
-app.use(express.static(path.join(__dirname)));
+// 静态文件服务 - 必须在API路由之前
+const staticPath = path.join(__dirname);
+app.use(express.static(staticPath));
+console.log(`📂 静态文件目录: ${staticPath}`);
+
+// 根路径 - 返回主页
+app.get('/', (req, res) => {
+    const indexPath = path.join(staticPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+    } else {
+        res.json({ 
+            message: '🎉 红色记忆——济南英雄风云录 API服务器正在运行！',
+            status: 'online',
+            timestamp: new Date().toISOString(),
+            environment: USE_JSON_STORE ? 'Vercel (JSON存储)' : '本地开发 (SQLite)'
+        });
+    }
+});
 
 // ==================== JWT认证中间件 ====================
 function authenticateToken(req, res, next) {
@@ -566,26 +585,18 @@ app.get('/api/activity/stats', (req, res) => {
     }
 });
 
-// ==================== 默认路由 ====================
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'login.html'));
-});
-
 // ==================== 启动服务器 ====================
+
+console.log('\n========================================');
+console.log('🚀 红色记忆——济南英雄风云录 服务器');
+console.log(`   环境: ${process.env.NODE_ENV || 'development'}`);
+console.log(`   数据存储: ${USE_JSON_STORE ? 'JSON文件 (Vercel/Serverless)' : 'SQLite数据库'}`);
+console.log('========================================\n');
 
 if (require.main === module) {
     app.listen(PORT, () => {
-        console.log('\n========================================');
-        console.log(`🚀 服务器已启动！`);
-        console.log(`   本地访问: http://localhost:${PORT}`);
+        console.log(`✅ 本地服务器已启动: http://localhost:${PORT}`);
         console.log(`   登录页面: http://localhost:${PORT}/login.html`);
-        console.log(`   数据存储: ${USE_JSON_STORE ? 'JSON文件 (适合Vercel)' : 'SQLite数据库'}`);
-        console.log('========================================\n');
     });
 }
 

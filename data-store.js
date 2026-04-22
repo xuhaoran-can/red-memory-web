@@ -8,8 +8,11 @@
 const fs = require('fs');
 const path = require('path');
 
-// 数据文件路径
-const DATA_DIR = path.join(__dirname, 'data');
+// 检测运行环境（Vercel/Serverless vs 本地）
+const isVercel = process.env.VERCEL || process.env.NOW || process.env.USE_JSON_STORE === 'true';
+
+// 数据文件路径 - Vercel必须使用 /tmp 目录（唯一可写的位置）
+const DATA_DIR = isVercel ? '/tmp/data' : path.join(__dirname, 'data');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const MEDALS_FILE = path.join(DATA_DIR, 'medals.json');
 const SCORE_HISTORY_FILE = path.join(DATA_DIR, 'score_history.json');
@@ -18,8 +21,13 @@ const CLUE_PURCHASES_FILE = path.join(DATA_DIR, 'clue_purchases.json');
 const ACTIVITY_STATS_FILE = path.join(DATA_DIR, 'activity_stats.json');
 
 // 确保数据目录存在
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+try {
+    if (!fs.existsSync(DATA_DIR)) {
+        fs.mkdirSync(DATA_DIR, { recursive: true });
+        console.log(`✅ 数据目录已创建: ${DATA_DIR}`);
+    }
+} catch (error) {
+    console.error('❌ 创建数据目录失败:', error.message);
 }
 
 // ==================== 工具函数 ====================
